@@ -11,22 +11,21 @@ function App() {
 
   const baseUrl = "http://localhost:3001/api/items";
 
-  // Determines the value for the priority level
+  // Determines label for each priority level
   const importanceLevel = [
     { value: 1, label: "Low" },
     { value: 2, label: "Medium" },
     { value: 3, label: "High" },
   ];
 
-  // Gets Items from backend
+  // Fetch items from backend on first load
   useEffect(() => {
     axios.get(baseUrl).then((response) => {
       setItems(response.data);
-      console.log(response.data);
     });
   }, []);
 
-  //Adds a new item
+  // Adds a new item to the list
   const addItem = (e) => {
     e.preventDefault();
 
@@ -47,7 +46,7 @@ function App() {
     });
   };
 
-  // Determines the sorting order
+  // Sorting logic depending on dropdown selection
   const sortOrder = (a, b) => {
     switch (orderBy) {
       case "name":
@@ -65,18 +64,14 @@ function App() {
     }
   };
 
-  // Destructures data for sorting
+  // Sorted version of items
   const sortedItems = [...items].sort(sortOrder);
 
-  // Updates purchased status
+  // Toggle purchased status
   const togglePurchased = (id, currentValue) => {
     axios
       .put(`${baseUrl}/${id}`, {
-        content: items.content,
-        important: items.important,
-        quantity: items.quantity,
         purchased: !currentValue,
-        dateAdded: items.dateAdded,
       })
       .then(() => {
         setItems(
@@ -87,7 +82,7 @@ function App() {
       });
   };
 
-  // Deletes purchased items
+  // Deletes all purchased items
   const deletePurchased = () => {
     setItems(items.filter((item) => !item.purchased));
     items.forEach((item) => {
@@ -108,30 +103,26 @@ function App() {
           >
             <div>
               <p className="font-medium">{item.content}</p>
-
               <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
 
-              {item.important > 0 && (
-                <p className="text-sm font-semibold italic">
-                  <span
-                    className={`${
-                      item.important === 1
-                        ? "text-yellow-500"
-                        : item.important === 2
-                        ? "text-orange-500"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {importanceLevel
-                      .find((l) => l.value === item.important)
-                      .label.toUpperCase()}
-                  </span>{" "}
-                  priority
-                </p>
-              )}
+              <p className="text-sm font-semibold italic">
+                <span
+                  className={
+                    item.important === 1
+                      ? "text-yellow-500"
+                      : item.important === 2
+                      ? "text-orange-500"
+                      : "text-red-500"
+                  }
+                >
+                  {importanceLevel
+                    .find((l) => l.value === item.important)
+                    .label.toUpperCase()}
+                </span>{" "}
+                priority
+              </p>
             </div>
 
-            {/* Toggle purchased status on/off */}
             <input
               type="checkbox"
               checked={item.purchased}
@@ -142,8 +133,8 @@ function App() {
         ))}
       </ul>
 
-      {/* Dropdown menu for Order Priority */}
-      <div className="text-xl  font-bold mb-3">
+      {/* Sorting Dropdown */}
+      <div className="text-xl font-bold mb-3">
         Order By:
         <select
           value={orderBy}
@@ -158,13 +149,13 @@ function App() {
         </select>
       </div>
 
-      {/* Delete Button that removes 'purchased' items */}
+      {/* Delete purchased items */}
       <div className="text-xl font-bold mb-3">
         Finished your shopping?
         <br />
         <br />
         <button
-          onClick={() => deletePurchased()}
+          onClick={deletePurchased}
           className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded-md transition"
         >
           Delete
@@ -173,7 +164,7 @@ function App() {
         <br />
       </div>
 
-      {/* Add New Item Form */}
+      {/* Add New Item */}
       <h1 className="text-xl font-bold mb-3 bg-green-800">Add a new Item</h1>
 
       <form
@@ -211,6 +202,8 @@ function App() {
             ))}
           </select>
         </label>
+        <br />
+        <br />
 
         <button
           type="submit"
