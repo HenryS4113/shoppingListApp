@@ -69,17 +69,17 @@ function App() {
 
   // Toggle purchased status
   const togglePurchased = (id, currentValue) => {
-    axios
-      .put(`${baseUrl}/${id}`, {
-        purchased: !currentValue,
-      })
-      .then(() => {
-        setItems(
-          items.map((item) =>
-            item.id === id ? { ...item, purchased: !currentValue } : item
-          )
-        );
-      });
+    const itemToToggle = items.find((item) => item.id === id);
+    if (!itemToToggle) return;
+
+    const updatedItem = {
+      ...itemToToggle,
+      purchased: !currentValue,
+    };
+
+    axios.put(`${baseUrl}/${id}`, updatedItem).then((response) => {
+      setItems(items.map((item) => (item.id === id ? response.data : item)));
+    });
   };
 
   // Deletes all purchased items
