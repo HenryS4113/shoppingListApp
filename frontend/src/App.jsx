@@ -9,7 +9,7 @@ function App() {
   const [itemPurchased, setPurchased] = useState(false);
   const [orderBy, setOrderBy] = useState("name");
 
-  const baseUrl = "http://localhost:3001/api/items";
+  const baseUrl = "http://citweb.lanecc.edu:5010/api/items";
 
   // Determines label for each priority level
   const importanceLevel = [
